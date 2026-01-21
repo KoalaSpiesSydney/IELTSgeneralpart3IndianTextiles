@@ -1,0 +1,1121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>IELTS Reading – Part 3 | Modern English Australia · Koala Spies Sydney</title>
+
+  <style>
+    :root{
+      --bg:#f5f5f5;
+      --bar:#1e1e1e;
+      --panel:#ffffff;
+      --ink:#1e1e1e;
+      --muted:#6b737a;
+      --line:rgba(0,0,0,.12);
+
+      --accent:#ff7a1a;
+      --shadow:0 10px 28px rgba(0,0,0,.14);
+      --radius:16px;
+
+      --ok:#1db954;
+      --err:#e74c3c;
+
+      --header-h:72px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      -webkit-text-size-adjust:100%;
+      text-rendering:optimizeLegibility;
+
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    button,input,label{ font:inherit; }
+    a{ color:inherit; }
+
+    /* ===== Header ===== */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:var(--bar);
+      color:#fff;
+      border-bottom:1px solid rgba(255,255,255,.12);
+    }
+    .topbar-inner{
+      max-width:1320px;
+      margin:0 auto;
+      padding:10px 14px;
+      min-height:var(--header-h);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      position:relative; /* anchor for QR */
+    }
+    .brand .title{
+      font-weight:900;
+      letter-spacing:1.6px;
+      color:var(--accent);
+      font-size:1.05rem;
+      text-transform:uppercase;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .brand .sub{
+      font-weight:500;
+      font-size:.9rem;
+      color:rgba(255,255,255,.88);
+      letter-spacing:.6px;
+      margin-top:4px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    /* --- QR generator (ON header bar, top-left) --- */
+    .qr-fab{
+      position:absolute;
+      top:50%;
+      left:12px;
+      transform:translateY(-50%);
+      z-index:2;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      gap:8px;
+      text-align:left;
+    }
+    .qr-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:9px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.22);
+      background:rgba(0,0,0,.55);
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+      touch-action:manipulation;
+      backdrop-filter: blur(6px);
+    }
+    .qr-panel{
+      width:min(260px, calc(100vw - 20px));
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      padding:10px;
+      display:none;
+    }
+    .qr-panel.open{ display:block; }
+
+    .qr-row{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .qr-input{
+      flex:1;
+      padding:9px 10px;
+      border-radius:10px;
+      border:2px solid rgba(0,0,0,.18);
+      outline:none;
+      font-size:.95rem;
+    }
+    .qr-input:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(255,122,26,.22);
+    }
+    .qr-mini{
+      padding:9px 10px;
+      border-radius:10px;
+      border:1px solid rgba(0,0,0,.14);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+    }
+    #qrCanvas{
+      margin-top:10px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:10px;
+      border:1px dashed rgba(0,0,0,.22);
+      border-radius:12px;
+      min-height:160px;
+    }
+
+    /* ===== Main ===== */
+    main{
+      flex:1;
+      max-width:1320px;
+      width:100%;
+      margin:0 auto;
+      padding:14px 14px 18px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .rubric{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px 16px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .rubric h2{ margin:0; font-size:1.05rem; }
+    .rubric p{ margin:4px 0 0; color:var(--muted); font-style:italic; line-height:1.5; }
+    .rubric .meta{ text-align:right; color:var(--muted); font-size:.92rem; white-space:nowrap; }
+
+    /* ===== Split workspace ===== */
+    .split{
+      flex:1;
+      min-height:min(72vh, 780px);
+      display:grid;
+      grid-template-columns: minmax(360px, 1fr) 12px minmax(460px, 1fr);
+      gap:0;
+      align-items:stretch;
+    }
+
+    .panel{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+    }
+    .panel-head{
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(to bottom, rgba(0,0,0,.03), rgba(0,0,0,0));
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .panel-title{ font-weight:900; font-size:.98rem; letter-spacing:.2px; }
+    .panel-sub{ font-size:.9rem; color:var(--muted); }
+    .panel-body{
+      padding:14px;
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    /* Divider resizer */
+    .divider{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:col-resize;
+      touch-action:none;
+      user-select:none;
+    }
+    .divider .bar{
+      width:12px;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:transparent;
+    }
+    .divider .handle{
+      width:10px;
+      height:54px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      box-shadow:0 6px 16px rgba(0,0,0,.12);
+    }
+
+    /* ===== Passage ===== */
+    .reading h3{ margin:0 0 10px; font-size:1.05rem; font-weight:900; }
+    .reading p{ margin:0 0 12px; line-height:1.75; }
+    .reading .para{
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:0 8px 18px rgba(0,0,0,.06);
+      margin:0 0 12px;
+    }
+    .reading .lead{
+      color:var(--muted);
+      margin-top:-4px;
+      margin-bottom:12px;
+      line-height:1.55;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:34px;
+      height:28px;
+      padding:0 10px;
+      border-radius:999px;
+      background:rgba(255,122,26,.14);
+      border:1px solid rgba(255,122,26,.35);
+      color:var(--ink);
+      font-weight:900;
+      margin-right:8px;
+      font-variant-numeric:tabular-nums;
+    }
+
+    /* ===== Question blocks ===== */
+    .block{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:#fff;
+      box-shadow:0 10px 22px rgba(0,0,0,.08);
+      overflow:hidden;
+      margin-bottom:14px;
+    }
+    .block-head{
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(to bottom, rgba(0,0,0,.05), rgba(0,0,0,0));
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .block-title{
+      font-weight:900;
+      margin:0;
+      font-size:1rem;
+    }
+    .block-inst{
+      margin:6px 0 0;
+      color:var(--muted);
+      line-height:1.5;
+      font-size:.95rem;
+    }
+    .block-body{ padding:12px 14px 14px; }
+
+    /* MCQ */
+    .mcq{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .qcard{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:#fff;
+      box-shadow:0 8px 18px rgba(0,0,0,.06);
+    }
+    .qcard.ok{ border-color:rgba(29,185,84,.55); box-shadow:0 8px 18px rgba(29,185,84,.10); }
+    .qcard.bad{ border-color:rgba(231,76,60,.55); box-shadow:0 8px 18px rgba(231,76,60,.10); }
+
+    .qtop{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .qno{
+      font-weight:900;
+      color:var(--muted);
+      min-width:44px;
+      font-variant-numeric:tabular-nums;
+    }
+    .qtext{ line-height:1.5; }
+
+    .opts{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:8px;
+    }
+    .opt{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 10px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      cursor:pointer;
+      background:#fff;
+      transition:transform .06s ease;
+    }
+    .opt:active{ transform:scale(.99); }
+    .opt input{ margin-top:2px; }
+    .opt strong{ display:inline-block; min-width:18px; }
+    .opt span{ line-height:1.35; }
+
+    /* Gap fill inputs */
+    .ans{
+      width:100%;
+      padding:10px 10px;
+      border-radius:10px;
+      border:2px solid rgba(0,0,0,.18);
+      background:#fff;
+      outline:none;
+      font-size:1rem;
+    }
+    .ans:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(255,122,26,.22);
+    }
+    .ans.ok{ border-color:var(--ok); background:rgba(29,185,84,.10); }
+    .ans.bad{ border-color:var(--err); background:rgba(231,76,60,.10); }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .action{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,.14);
+      background:#fff;
+      color:var(--ink);
+      cursor:pointer;
+      font-weight:900;
+      box-shadow:0 10px 22px rgba(0,0,0,.10);
+      -webkit-tap-highlight-color:transparent;
+      touch-action:manipulation;
+      white-space:nowrap;
+    }
+    .action.primary{
+      border-color:rgba(255,122,26,.35);
+      background:rgba(255,122,26,.14);
+    }
+    .action:disabled{
+      opacity:.5;
+      cursor:not-allowed;
+    }
+
+    #score{
+      margin-top:12px;
+      font-weight:900;
+      min-height:1.4rem;
+    }
+
+    #feedbackPanel{
+      margin-top:12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      padding:12px;
+      display:none;
+    }
+    #feedbackText{ color:var(--muted); line-height:1.55; }
+
+    /* Footer */
+    footer{
+      background:var(--bar);
+      border-top:1px solid rgba(255,255,255,.12);
+      color:rgba(255,255,255,.82);
+    }
+    .footer-inner{
+      max-width:1320px;
+      margin:0 auto;
+      padding:14px 14px;
+      text-align:center;
+      font-size:.92rem;
+      line-height:1.5;
+    }
+    .footer-inner .small{
+      font-size:.86rem;
+      color:rgba(255,255,255,.70);
+      margin-top:6px;
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .split{ grid-template-columns: 1fr; min-height:auto; gap:12px; }
+      .divider{ display:none; }
+
+      /* keep QR usable on small screens */
+      .qr-fab{ left:10px; }
+      .qr-panel{ width:min(280px, calc(100vw - 20px)); }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ transition:none !important; scroll-behavior:auto !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+
+      <!-- QR (correct position: inside header bar, top-left) -->
+      <div class="qr-fab" aria-label="QR code tools">
+        <button class="qr-btn" id="qrToggle" type="button">QR</button>
+
+        <div class="qr-panel" id="qrPanel" aria-label="QR code generator">
+          <div class="qr-row">
+            <input class="qr-input" id="qrUrl" type="text" autocomplete="off" spellcheck="false"
+                   placeholder="Page link" aria-label="QR code URL">
+            <button class="qr-mini" id="qrMake" type="button">Make</button>
+          </div>
+          <div class="qr-row" style="margin-top:8px;">
+            <button class="qr-mini" id="qrThisPage" type="button">This page</button>
+            <button class="qr-mini" id="qrCopy" type="button">Copy link</button>
+          </div>
+          <div id="qrCanvas" aria-label="QR output"></div>
+        </div>
+      </div>
+
+      <div class="brand">
+        <div class="title">Modern English Australia</div>
+        <div class="sub">Koala Spies Sydney · IELTS Reading (Part 3)</div>
+      </div>
+
+    </div>
+  </header>
+
+  <main>
+    <section class="rubric" aria-label="Rubric">
+      <div>
+        <h2>SECTION 3</h2>
+        <p>Read the text on the left and answer Questions 29–35 and 36–40.</p>
+      </div>
+    </section>
+
+    <section class="split" id="split">
+      <!-- LEFT: READING -->
+      <section class="panel" aria-label="Reading text">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Reading passage</div>
+            <div class="panel-sub">Threads of Influence</div>
+          </div>
+        </div>
+
+        <div class="panel-body reading">
+          <h3>Threads of Influence: How Indian Textiles Shaped Western Fashion</h3>
+          <p class="lead">
+            You will need to match headings to sections (A–F) and answer multiple choice questions.
+          </p>
+
+          <p><strong>Reading Passage</strong></p>
+          <p><strong>Threads of Influence: Indian Textiles and the Making of British Industrial Power</strong></p>
+
+          <p>
+            For much of the early modern period, India was the world’s foremost producer of cotton and silk textiles.
+            According to Indira Modi, textile museum owner in Gujarat has observed, “Long before Europe learned to mechanise cloth,
+            India had already perfected it by hand — not as craft alone, but as industry.” Indian weavers had long possessed highly
+            advanced techniques in spinning, dyeing, and patterning, producing fabrics that were lighter, more colourfast, and more
+            intricate than anything manufactured in Europe.
+          </p>
+
+          <p>
+            These textiles were traded across Asia, Africa, and Europe and were widely admired for both their aesthetic sophistication
+            and durability.
+          </p>
+
+          <p>
+            By the late seventeenth century, Indian cottons such as chintz, calico, and muslin had become coveted in Britain for the
+            fineness and intricate construction. The quality and celebration of these treasures from the colonies, posed a serious threat
+            to the British textile industry, and perhaps even their pride. Domestic wool and silk producers created heavy and rougher fabrics,
+            and they were becoming unable to compete on quality and price with the fine fabrics pulling in on ships from the far easter.
+          </p>
+
+          <p>
+            Rather than responding through innovation alone, British manufacturers and lawmakers pursued a strategy of imitation combined with
+            protectionism. Indian patterns, dyeing methods, and weaving techniques were carefully studied and replicated, while legislation was
+            introduced to restrict the import of Indian goods into Britain.
+          </p>
+
+          <p>
+            These restrictions culminated in a series of laws commonly referred to as the Calico Acts, which effectively banned most Indian cotton
+            textiles from the British market in the early eighteenth century. Although these measures were justified as protecting domestic employment,
+            their practical effect was to remove Indian competition while British producers refined their own methods. Crucially, the ban applied only to
+            finished goods entering Britain; Indian knowledge itself continued to circulate, informing British experimentation and design.
+          </p>
+
+          <p>
+            The next phase of transformation occurred during the Industrial Revolution. British inventors developed machinery capable of reproducing cotton
+            textiles on a scale previously unimaginable. Devices such as the spinning jenny and the power loom allowed manufacturers to mechanise processes
+            that had once relied on skilled hand labour. While these technologies were novel, the fabrics they produced were often direct descendants of Indian
+            originals, replicating established patterns and colour schemes. According to a professor of fashion history at a London university, Jane Dawe,
+            “British industrial textiles did not emerge from a creative vacuum; they were mechanised answers to Indian questions Europe had already been asking
+            for a century.”
+          </p>
+
+          <p>
+            Once mechanisation had reduced costs sufficiently, Britain reversed its earlier protectionist stance. Indian markets, now under colonial control,
+            were opened to British manufactured textiles, while Indian producers faced barriers when attempting to export their own goods. British cloth flooded
+            the subcontinent, undercutting local weavers who could not compete with machine-made alternatives. Regions that had previously thrived as centres of
+            textile production experienced widespread economic decline, as artisanal industries collapsed.
+          </p>
+
+          <p>
+            The similarities to modern fashion, the flood of cheaper imitation goods from China and Asia onto the European market, stifling the European fashion
+            power houses ability to innovative and compete, are not lost of profession door. “Fast fashion hasn’t just cheapened clothing — it has smothered Europe’s
+            tradition of craftsmanship, replacing centuries of artistry with disposable trends.”
+          </p>
+
+          <p>
+            This process in India was not merely economic but cultural. Designs deeply embedded in Indian history were rebranded and absorbed into European identity.
+            The buta motif, originating in Kashmir and associated with luxury shawls woven from fine goat hair, became internationally known as “Paisley,” named after
+            a Scottish town that produced mechanised imitations. Over time, the Indian origins of such designs were obscured, even as they were celebrated globally within
+            Western hippy fashion and the London look of the 1960s.
+          </p>
+
+          <p>
+            Another cruel aspect in the history of British textiles is slavery. While India produced its own cotton often on family farms, the British required the colonisation
+            of the Americans and slavery to keep the prices down and compete with India.
+          </p>
+
+          <p>
+            The story of Indian textiles and British industrialisation should be seen as woven intricately together, but with the Indian thread the basis of the weave.
+            British industrial success did not emerge in isolation but was built upon the appropriation, adaptation, slavery and eventual suppression of a pre-existing and highly
+            sophisticated textile economy. As India Modi argues, “The legacy of industrialisation cannot be fully understood without acknowledging the uneven exchanges that underpinned it.”
+          </p>
+
+          <p class="lead" style="margin-top:6px;">
+            Note: Your headings task is for Sections A–F (Questions 28–35).
+          </p>
+        </div>
+      </section>
+
+      <!-- DIVIDER -->
+      <div class="divider" id="divider" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Resize panels">
+        <div class="bar"><div class="handle" aria-hidden="true"></div></div>
+      </div>
+
+      <!-- RIGHT: QUESTIONS -->
+      <section class="panel" aria-label="Questions">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">IELTS Reading – Part 3 Questions</div>
+            <div class="panel-sub">Questions 29–40</div>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <!-- MCQ -->
+          <div class="block">
+            <div class="block-head">
+              <div>
+                <div class="block-title">Questions 29–35</div>
+                <div class="block-inst">Choose the correct letter, A, B, C, or D.</div>
+              </div>
+            </div>
+
+            <div class="block-body mcq" id="mcqWrap">
+
+              <div class="qcard" data-q="29">
+                <div class="qtop">
+                  <div class="qno">29.</div>
+                  <div class="qtext">What does Indira Modi suggest about India’s textile production?</div>
+                </div>
+                <div class="opts">
+                  <label class="opt"><input type="radio" name="q29" value="A"><strong>A.</strong><span>It relied mainly on simple craft traditions.</span></label>
+                  <label class="opt"><input type="radio" name="q29" value="B"><strong>B.</strong><span>It was technologically inferior to European methods.</span></label>
+                  <label class="opt"><input type="radio" name="q29" value="C"><strong>C.</strong><span>It functioned as a sophisticated industry long before Europe mechanised.</span></label>
+                  <label class="opt"><input type="radio" name="q29" value="D"><strong>D.</strong><span>It expanded only after European traders arrived.</span></label>
+                </div>
+              </div>
+
+              <div class="qcard" data-q="30">
+                <div class="qtop">
+                  <div class="qno">30.</div>
+                  <div class="qtext">Why did Indian cottons become popular in Britain in the seventeenth century?</div>
+                </div>
+                <div class="opts">
+                  <label class="opt"><input type="radio" name="q30" value="A"><strong>A.</strong><span>They were cheaper than British wool and silk.</span></label>
+                  <label class="opt"><input type="radio" name="q30" value="B"><strong>B.</strong><span>They were lighter and more luxurious than domestic fabrics.</span></label>
+                  <label class="opt"><input type="radio" name="q30" value="C"><strong>C.</strong><span>They were promoted by the British government.</span></label>
+                  <label class="opt"><input type="radio" name="q30" value="D"><strong>D.</strong><span>They were required for military uniforms.</span></label>
+                </div>
+              </div>
+
+              <div class="qcard" data-q="31">
+                <div class="qtop">
+                  <div class="qno">31.</div>
+                  <div class="qtext">What was the main purpose of the Calico Acts?</div>
+                </div>
+                <div class="opts">
+                  <label class="opt"><input type="radio" name="q31" value="A"><strong>A.</strong><span>To encourage British consumers to buy more imported goods.</span></label>
+                  <label class="opt"><input type="radio" name="q31" value="B"><strong>B.</strong><span>To protect Indian weavers from British competition.</span></label>
+                  <label class="opt"><input type="radio" name="q31" value="C"><strong>C.</strong><span>To prevent the export of British textiles to India.</span></label>
+                  <label class="opt"><input type="radio" name="q31" value="D"><strong>D.</strong><span>To limit Indian textile imports while British producers improved their own methods.</span></label>
+                </div>
+              </div>
+
+              <div class="qcard" data-q="32">
+                <div class="qtop">
+                  <div class="qno">32.</div>
+                  <div class="qtext">According to the passage, how did British industrial textiles develop?</div>
+                </div>
+                <div class="opts">
+                  <label class="opt"><input type="radio" name="q32" value="A"><strong>A.</strong><span>Through entirely original British inventions.</span></label>
+                  <label class="opt"><input type="radio" name="q32" value="B"><strong>B.</strong><span>By mechanising designs and techniques borrowed from India.</span></label>
+                  <label class="opt"><input type="radio" name="q32" value="C"><strong>C.</strong><span>By rejecting Indian influence and creating new patterns.</span></label>
+                  <label class="opt"><input type="radio" name="q32" value="D"><strong>D.</strong><span>Through collaboration between British and Indian weavers.</span></label>
+                </div>
+              </div>
+
+              <div class="qcard" data-q="33">
+                <div class="qtop">
+                  <div class="qno">33.</div>
+                  <div class="qtext">What was one major consequence of Britain reopening Indian markets to British textiles?</div>
+                </div>
+                <div class="opts">
+                  <label class="opt"><input type="radio" name="q33" value="A"><strong>A.</strong><span>Indian weavers gained access to new machinery.</span></label>
+                  <label class="opt"><input type="radio" name="q33" value="B"><strong>B.</strong><span>Indian textile exports increased significantly.</span></label>
+                  <label class="opt"><input type="radio" name="q33" value="C"><strong>C.</strong><span>Local Indian industries declined due to competition from machine made cloth.</span></label>
+                  <label class="opt"><input type="radio" name="q33" value="D"><strong>D.</strong><span>British manufacturers lost control of the Indian market.</span></label>
+                </div>
+              </div>
+
+              <div class="qcard" data-q="34">
+                <div class="qtop">
+                  <div class="qno">34.</div>
+                  <div class="qtext">Why does the author compare historical textile trade to modern fast fashion?</div>
+                </div>
+                <div class="opts">
+                  <label class="opt"><input type="radio" name="q34" value="A"><strong>A.</strong><span>To show that European designers now dominate global markets.</span></label>
+                  <label class="opt"><input type="radio" name="q34" value="B"><strong>B.</strong><span>To highlight a recurring pattern of cheap imports undermining traditional craftsmanship.</span></label>
+                  <label class="opt"><input type="radio" name="q34" value="C"><strong>C.</strong><span>To argue that Asian countries no longer influence European fashion.</span></label>
+                  <label class="opt"><input type="radio" name="q34" value="D"><strong>D.</strong><span>To demonstrate that fashion trends always repeat themselves.</span></label>
+                </div>
+              </div>
+
+              <div class="qcard" data-q="35">
+                <div class="qtop">
+                  <div class="qno">35.</div>
+                  <div class="qtext">What does the example of the buta motif becoming “Paisley” illustrate?</div>
+                </div>
+                <div class="opts">
+                  <label class="opt"><input type="radio" name="q35" value="A"><strong>A.</strong><span>The decline of Indian textile production.</span></label>
+                  <label class="opt"><input type="radio" name="q35" value="B"><strong>B.</strong><span>The global popularity of Scottish design.</span></label>
+                  <label class="opt"><input type="radio" name="q35" value="C"><strong>C.</strong><span>The cultural rebranding and erasure of Indian origins.</span></label>
+                  <label class="opt"><input type="radio" name="q35" value="D"><strong>D.</strong><span>The improvement of European weaving techniques.</span></label>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- GAP FILL -->
+          <div class="block">
+            <div class="block-head">
+              <div>
+                <div class="block-title">Questions 36–40</div>
+                <div class="block-inst">
+                  Complete the paragraph below. Choose ONE WORD ONLY from the passage for each answer.
+                </div>
+              </div>
+            </div>
+
+            <div class="block-body">
+              <p style="margin-top:0;"><strong>The transformation of the British textile industry</strong></p>
+
+              <p>
+                British industrialisation was shaped not only by technological innovation but also by the appropriation of Indian expertise.
+                Although laws restricted the import of finished Indian textiles, Indian
+                <input class="ans" type="text" autocomplete="off" spellcheck="false" data-q="36" aria-label="Answer for question 36">
+                continued to influence British experimentation. Later, when mechanisation reduced production costs, Britain reversed its earlier policies
+                and exported large quantities of cloth to India, causing the collapse of many
+                <input class="ans" type="text" autocomplete="off" spellcheck="false" data-q="37" aria-label="Answer for question 37">
+                industries. This shift was not purely economic; Indian cultural designs were also absorbed into European identity, with motifs such as the buta
+                being renamed and their origins gradually
+                <input class="ans" type="text" autocomplete="off" spellcheck="false" data-q="38" aria-label="Answer for question 38">
+                . Meanwhile, Britain relied on cotton produced through
+                <input class="ans" type="text" autocomplete="off" spellcheck="false" data-q="39" aria-label="Answer for question 39">
+                in the Americas, contrasting sharply with India’s family based farming. Ultimately, the story challenges the idea that industrial progress was purely
+                <input class="ans" type="text" autocomplete="off" spellcheck="false" data-q="40" aria-label="Answer for question 40">
+                , revealing instead a history shaped by unequal exchanges.
+              </p>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="action primary" id="submitBtn" type="button">Submit & score</button>
+            <button class="action" id="revealNextBtn" type="button" disabled>Reveal next</button>
+            <button class="action" id="resetBtn" type="button">Reset</button>
+          </div>
+
+          <div id="score" aria-live="polite"></div>
+
+          <div id="feedbackPanel" aria-live="polite">
+            <div style="font-weight:900; margin-bottom:6px;">Feedback</div>
+            <div id="feedbackText"></div>
+          </div>
+
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <!-- KOALA SPIES COPYRIGHT FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      © Koala Spies Sydney · Modern English Australia · All Rights Reserved
+      <div class="small">Koala Spies Sydney is a Modern English Australia project.</div>
+    </div>
+  </footer>
+
+  <!-- QRCode library (required) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    // --- QR generator ---
+    (function initQR(){
+      const toggle = document.getElementById("qrToggle");
+      const panel  = document.getElementById("qrPanel");
+      const urlInp = document.getElementById("qrUrl");
+      const makeBtn = document.getElementById("qrMake");
+      const thisBtn = document.getElementById("qrThisPage");
+      const copyBtn = document.getElementById("qrCopy");
+      const out = document.getElementById("qrCanvas");
+
+      if (!toggle || !panel || !urlInp || !makeBtn || !thisBtn || !copyBtn || !out) return;
+
+      function clearOut(){ out.innerHTML = ""; }
+
+      function makeQR(text){
+        const val = String(text || "").trim();
+        if (!val) return;
+        clearOut();
+        new QRCode(out, {
+          text: val,
+          width: 180,
+          height: 180,
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+
+      toggle.addEventListener("click", () => {
+        panel.classList.toggle("open");
+        if (panel.classList.contains("open")) {
+          urlInp.value = window.location.href;
+          makeQR(urlInp.value);
+          urlInp.focus();
+          urlInp.select();
+        }
+      });
+
+      makeBtn.addEventListener("click", () => makeQR(urlInp.value));
+
+      thisBtn.addEventListener("click", () => {
+        urlInp.value = window.location.href;
+        makeQR(urlInp.value);
+      });
+
+      copyBtn.addEventListener("click", async () => {
+        const val = String(urlInp.value || "").trim();
+        if (!val) return;
+        try{
+          await navigator.clipboard.writeText(val);
+          copyBtn.textContent = "Copied";
+          setTimeout(() => (copyBtn.textContent = "Copy link"), 900);
+        } catch(e){
+          urlInp.focus();
+          urlInp.select();
+          copyBtn.textContent = "Select & copy";
+          setTimeout(() => (copyBtn.textContent = "Copy link"), 1200);
+        }
+      });
+
+      urlInp.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") makeQR(urlInp.value);
+      });
+    })();
+
+    // =========================
+    // Divider resizer (desktop)
+    // =========================
+    (function initDivider(){
+      const split = document.getElementById("split");
+      const divider = document.getElementById("divider");
+      if (!split || !divider) return;
+
+      let dragging = false;
+
+      function setCols(leftPx){
+        const minLeft = 360;
+        const minRight = 460;
+        const total = split.getBoundingClientRect().width;
+        const dividerW = 12;
+
+        const left = Math.max(minLeft, Math.min(leftPx, total - dividerW - minRight));
+        split.style.gridTemplateColumns = `minmax(${minLeft}px, ${left}px) ${dividerW}px minmax(${minRight}px, 1fr)`;
+      }
+
+      function onDown(e){
+        if (window.matchMedia("(max-width: 980px)").matches) return;
+        dragging = true;
+        divider.setAttribute("aria-grabbed", "true");
+        divider.focus();
+        e.preventDefault();
+      }
+      function onMove(e){
+        if (!dragging) return;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const rect = split.getBoundingClientRect();
+        setCols(clientX - rect.left);
+      }
+      function onUp(){
+        if (!dragging) return;
+        dragging = false;
+        divider.setAttribute("aria-grabbed", "false");
+      }
+
+      divider.addEventListener("mousedown", onDown);
+      divider.addEventListener("touchstart", onDown, { passive:false });
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("touchmove", onMove, { passive:true });
+      window.addEventListener("mouseup", onUp);
+      window.addEventListener("touchend", onUp);
+
+      divider.addEventListener("keydown", (e) => {
+        if (window.matchMedia("(max-width: 980px)").matches) return;
+        const rect = split.getBoundingClientRect();
+        const current = split.style.gridTemplateColumns || "";
+        let leftPx = Math.round(rect.width * 0.50);
+        const m = current.match(/minmax\(\d+px,\s*([0-9.]+)px\)/);
+        if (m) leftPx = parseFloat(m[1]);
+
+        const step = 24;
+        if (e.key === "ArrowLeft"){ setCols(leftPx - step); e.preventDefault(); }
+        if (e.key === "ArrowRight"){ setCols(leftPx + step); e.preventDefault(); }
+      });
+    })();
+
+    // =========================
+    // Scoring + reveal-next + reset
+    // =========================
+    const ANSWER_KEY = {
+      29: "C",
+      30: "B",
+      31: "D",
+      32: "B",
+      33: "C",
+      34: "B",
+      35: "C",
+      36: "knowledge",
+      37: "artisanal",
+      38: "obscured",
+      39: "slavery",
+      40: "technological"
+    };
+
+    const FEEDBACK = {
+      29: "Answer: C",
+      30: "Answer: B",
+      31: "Answer: D",
+      32: "Answer: B",
+      33: "Answer: C",
+      34: "Answer: B",
+      35: "Answer: C",
+      36: "Answer: knowledge",
+      37: "Answer: artisanal",
+      38: "Answer: obscured",
+      39: "Answer: slavery",
+      40: "Answer: technological"
+    };
+
+    const submitBtn = document.getElementById("submitBtn");
+    const revealBtn = document.getElementById("revealNextBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const scoreEl = document.getElementById("score");
+    const feedbackPanel = document.getElementById("feedbackPanel");
+    const feedbackText = document.getElementById("feedbackText");
+
+    const gapInputs = Array.from(document.querySelectorAll('.ans[data-q]'));
+    const mcqCards = Array.from(document.querySelectorAll('.qcard[data-q]'));
+
+    const order = [29,30,31,32,33,34,35,36,37,38,39,40];
+    let revealIndex = 0;
+    let submitted = false;
+
+    function norm(s){
+      return String(s || "").trim().toLowerCase().replace(/\s+/g," ");
+    }
+
+    function setFeedback(html){
+      if (!feedbackPanel || !feedbackText) return;
+      if (!html){
+        feedbackPanel.style.display = "none";
+        feedbackText.textContent = "";
+        return;
+      }
+      feedbackPanel.style.display = "block";
+      feedbackText.innerHTML = html;
+    }
+
+    function clearMarks(){
+      mcqCards.forEach(c => c.classList.remove("ok","bad"));
+      gapInputs.forEach(i => i.classList.remove("ok","bad"));
+    }
+
+    function scoreAll(){
+      clearMarks();
+
+      let total = order.length;
+      let correct = 0;
+      let answered = 0;
+
+      for (let q = 29; q <= 35; q++){
+        const key = ANSWER_KEY[q];
+        const picked = document.querySelector(`input[name="q${q}"]:checked`);
+        const card = document.querySelector(`.qcard[data-q="${q}"]`);
+        if (!card) continue;
+
+        if (picked) answered++;
+
+        if (picked && picked.value === key){
+          correct++;
+          card.classList.add("ok");
+        } else if (picked && picked.value !== key){
+          card.classList.add("bad");
+        }
+      }
+
+      gapInputs.forEach(input => {
+        const q = Number(input.dataset.q);
+        const key = ANSWER_KEY[q];
+        if (!key) return;
+
+        const val = norm(input.value);
+        if (val) answered++;
+
+        if (val && val === norm(key)){
+          correct++;
+          input.classList.add("ok");
+        } else if (val && val !== norm(key)){
+          input.classList.add("bad");
+        }
+      });
+
+      scoreEl.textContent = `Score: ${correct} / ${total} (answered ${answered})`;
+
+      submitted = true;
+      revealIndex = 0;
+      revealBtn.disabled = false;
+
+      if (answered === 0){
+        setFeedback("Answer the questions, then click Submit & score.");
+      } else if (correct === total && answered === total){
+        setFeedback("All correct.");
+      } else {
+        setFeedback("Items marked in red are incorrect. Use Reveal next to show one answer at a time.");
+      }
+    }
+
+    function revealNext(){
+      if (!submitted) return;
+
+      while (revealIndex < order.length){
+        const q = order[revealIndex++];
+        const key = ANSWER_KEY[q];
+
+        if (q >= 29 && q <= 35){
+          const picked = document.querySelector(`input[name="q${q}"]:checked`);
+          const card = document.querySelector(`.qcard[data-q="${q}"]`);
+          if (!card) continue;
+
+          if (!picked || picked.value !== key){
+            const target = document.querySelector(`input[name="q${q}"][value="${key}"]`);
+            if (target) target.checked = true;
+            card.classList.remove("bad");
+            card.classList.add("ok");
+            setFeedback(`<div><strong>Revealed:</strong> Question ${q}. ${FEEDBACK[q] || ""}</div>`);
+            break;
+          }
+        } else {
+          const input = document.querySelector(`.ans[data-q="${q}"]`);
+          if (!input) continue;
+
+          if (norm(input.value) !== norm(key)){
+            input.value = key;
+            input.classList.remove("bad");
+            input.classList.add("ok");
+            setFeedback(`<div><strong>Revealed:</strong> Question ${q}. ${FEEDBACK[q] || ""}</div>`);
+            break;
+          }
+        }
+      }
+
+      let correct = 0;
+      let total = order.length;
+
+      for (let q = 29; q <= 35; q++){
+        const key = ANSWER_KEY[q];
+        const picked = document.querySelector(`input[name="q${q}"]:checked`);
+        if (picked && picked.value === key) correct++;
+      }
+      gapInputs.forEach(input => {
+        const q = Number(input.dataset.q);
+        const key = ANSWER_KEY[q];
+        if (norm(input.value) === norm(key)) correct++;
+      });
+
+      const answered = (function(){
+        let a = 0;
+        for (let q = 29; q <= 35; q++){
+          const picked = document.querySelector(`input[name="q${q}"]:checked`);
+          if (picked) a++;
+        }
+        gapInputs.forEach(i => { if (norm(i.value)) a++; });
+        return a;
+      })();
+
+      scoreEl.textContent = `Score: ${correct} / ${total} (answered ${answered})`;
+
+      if (revealIndex >= order.length){
+        revealBtn.disabled = true;
+        setFeedback("All remaining answers have been revealed.");
+      }
+    }
+
+    function resetAll(){
+      clearMarks();
+
+      for (let q = 29; q <= 35; q++){
+        document.querySelectorAll(`input[name="q${q}"]`).forEach(r => r.checked = false);
+      }
+
+      gapInputs.forEach(i => { i.value = ""; });
+
+      scoreEl.textContent = "";
+      setFeedback("");
+
+      submitted = false;
+      revealIndex = 0;
+      revealBtn.disabled = true;
+    }
+
+    submitBtn.addEventListener("click", scoreAll);
+    revealBtn.addEventListener("click", revealNext);
+    resetBtn.addEventListener("click", resetAll);
+  </script>
+</body>
+</html>
