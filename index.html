@@ -314,34 +314,85 @@
     .block-body{ padding:12px 14px 14px; }
 
     /* MCQ */
-    .mcq{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
-    .qcard{
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-      background:#fff;
-      box-shadow:0 8px 18px rgba(0,0,0,.06);
-    }
-    .qcard.ok{ border-color:rgba(29,185,84,.55); box-shadow:0 8px 18px rgba(29,185,84,.10); }
-    .qcard.bad{ border-color:rgba(231,76,60,.55); box-shadow:0 8px 18px rgba(231,76,60,.10); }
+/* --- QR generator (button in header, panel drops BELOW header) --- */
+.topbar-inner{ position:relative; }
 
-    .qtop{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-      margin-bottom:10px;
-    }
-    .qno{
-      font-weight:900;
-      color:var(--muted);
-      min-width:44px;
-      font-variant-numeric:tabular-nums;
-    }
-    .qtext{ line-height:1.5; }
+.qr-fab{
+  position:absolute;
+  top:50%;
+  left:12px;
+  transform:translateY(-50%);
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:8px;
+  text-align:left;
+}
+
+.qr-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:9px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);
+  background:rgba(0,0,0,.55);
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  backdrop-filter: blur(6px);
+}
+
+/* Panel is fixed below the sticky header so it doesn't "travel" with header content */
+.qr-panel{
+  position:fixed;
+  top:calc(var(--header-h) + 10px);
+  left:10px;
+  width:min(280px, calc(100vw - 20px));
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  padding:10px;
+  display:none;
+  z-index:2001; /* above content, below nothing else important */
+}
+.qr-panel.open{ display:block; }
+
+.qr-row{ display:flex; gap:8px; align-items:center; }
+.qr-input{
+  flex:1;
+  padding:9px 10px;
+  border-radius:10px;
+  border:2px solid rgba(0,0,0,.18);
+  outline:none;
+  font-size:.95rem;
+}
+.qr-input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(255,122,26,.22);
+}
+.qr-mini{
+  padding:9px 10px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,.14);
+  background:#fff;
+  cursor:pointer;
+  font-weight:900;
+}
+#qrCanvas{
+  margin-top:10px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:10px;
+  border:1px dashed rgba(0,0,0,.22);
+  border-radius:12px;
+  min-height:160px;
+}
 
     .opts{
       display:flex;
@@ -786,68 +837,115 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <script>
-    // --- QR generator ---
-    (function initQR(){
-      const toggle = document.getElementById("qrToggle");
-      const panel  = document.getElementById("qrPanel");
-      const urlInp = document.getElementById("qrUrl");
-      const makeBtn = document.getElementById("qrMake");
-      const thisBtn = document.getElementById("qrThisPage");
-      const copyBtn = document.getElementById("qrCopy");
-      const out = document.getElementById("qrCanvas");
+ // --- QR generator ---
+(function initQR(){
+  const toggle = document.getElementById("qrToggle");
+  const panel  = document.getElementById("qrPanel");
+  const urlInp = document.getElementById("qrUrl");
+  const makeBtn = document.getElementById("qrMake");
+  const thisBtn = document.getElementById("qrThisPage");
+  const copyBtn = document.getElementById("qrCopy");
+  const out = document.getElementById("qrCanvas");
 
-      if (!toggle || !panel || !urlInp || !makeBtn || !thisBtn || !copyBtn || !out) return;
+  if (!toggle || !panel || !urlInp || !makeBtn || !thisBtn || !copyBtn || !out) return;
 
-      function clearOut(){ out.innerHTML = ""; }
+  function clearOut(){ out.innerHTML = ""; }
 
-      function makeQR(text){
-        const val = String(text || "").trim();
-        if (!val) return;
-        clearOut();
-        new QRCode(out, {
-          text: val,
-          width: 180,
-          height: 180,
-          correctLevel: QRCode.CorrectLevel.M
-        });
-      }
+  function makeQR(text){
+    const val = String(text || "").trim();
+    if (!val) return;
+    clearOut();
+    if (typeof QRCode === "undefined") {
+      out.textContent = "QRCode library not loaded.";
+      return;
+    }
+    new QRCode(out, {
+      text: val,
+      width: 180,
+      height: 180,
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
 
-      toggle.addEventListener("click", () => {
-        panel.classList.toggle("open");
-        if (panel.classList.contains("open")) {
-          urlInp.value = window.location.href;
-          makeQR(urlInp.value);
-          urlInp.focus();
-          urlInp.select();
-        }
-      });
+  function openPanel(){
+    panel.classList.add("open");
+    urlInp.value = window.location.href;
+    makeQR(urlInp.value);
+    urlInp.focus();
+    urlInp.select();
+  }
 
-      makeBtn.addEventListener("click", () => makeQR(urlInp.value));
+  function closePanel(){
+    panel.classList.remove("open");
+  }
 
-      thisBtn.addEventListener("click", () => {
-        urlInp.value = window.location.href;
-        makeQR(urlInp.value);
-      });
+  function isOpen(){
+    return panel.classList.contains("open");
+  }
 
-      copyBtn.addEventListener("click", async () => {
-        const val = String(urlInp.value || "").trim();
-        if (!val) return;
-        try{
-          await navigator.clipboard.writeText(val);
-          copyBtn.textContent = "Copied";
-          setTimeout(() => (copyBtn.textContent = "Copy link"), 900);
-        } catch(e){
-          urlInp.focus();
-          urlInp.select();
-          copyBtn.textContent = "Select & copy";
-          setTimeout(() => (copyBtn.textContent = "Copy link"), 1200);
-        }
-      });
+  // Toggle open/close reliably
+  toggle.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isOpen()) closePanel();
+    else openPanel();
+  });
 
-      urlInp.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") makeQR(urlInp.value);
-      });
-    })();
+  // Keep clicks inside the panel from closing it
+  panel.addEventListener("click", (e) => e.stopPropagation());
+
+  makeBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    makeQR(urlInp.value);
+  });
+
+  thisBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    urlInp.value = window.location.href;
+    makeQR(urlInp.value);
+  });
+
+  copyBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const val = String(urlInp.value || "").trim();
+    if (!val) return;
+    try{
+      await navigator.clipboard.writeText(val);
+      copyBtn.textContent = "Copied";
+      setTimeout(() => (copyBtn.textContent = "Copy link"), 900);
+    } catch(err){
+      urlInp.focus();
+      urlInp.select();
+      copyBtn.textContent = "Select & copy";
+      setTimeout(() => (copyBtn.textContent = "Copy link"), 1200);
+    }
+  });
+
+  urlInp.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") makeQR(urlInp.value);
+    if (e.key === "Escape") closePanel();
+  });
+
+  // Close on outside click
+  document.addEventListener("click", () => {
+    if (isOpen()) closePanel();
+  });
+
+  // Close on Esc anywhere
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && isOpen()) closePanel();
+  });
+
+  // Close on scroll so it never covers passage/questions while moving down
+  window.addEventListener("scroll", () => {
+    if (isOpen()) closePanel();
+  }, { passive:true });
+
+  // Also close on resize/orientation changes
+  window.addEventListener("resize", () => {
+    if (isOpen()) closePanel();
+  }, { passive:true });
+})();
 
     // =========================
     // Divider resizer (desktop)
